@@ -1,0 +1,42 @@
+{
+  "name": "codemonauts/craft-holidays",
+  "description": "Craft CMS plugin for international holidays.",
+  "version": "1.0.0",
+  "type": "craft-plugin",
+  "keywords": [
+    "craft",
+    "cms",
+    "craftcms",
+    "craft-plugin"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "codemonauts",
+      "homepage": "https://codemonauts.com"
+    }
+  ],
+  "support": {
+    "source": "https://github.com/codemonauts/craft-holidays",
+    "docs": "https://github.com/codemonauts/craft-holidays/blob/master/README.md",
+    "issues": "https://github.com/codemonauts/craft-holidays/issues"
+  },
+  "require": {
+    "craftcms/cms": "^3.0.0",
+    "azuyalabs/yasumi": "^2.2.0",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "codemonauts\\holidays\\": "src/"
+    }
+  },
+  "extra": {
+    "handle": "holidays",
+    "class": "codemonauts\\holidays\\Holidays",
+    "name": "Holidays",
+    "description": "Access to many international holidays.",
+    "hasCpSection": false,
+    "hasSettings": true
+  }
+}

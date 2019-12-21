@@ -1,0 +1,11 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.selectField({
+    label: "Country"|t("holidays"),
+    id: 'defaultCode',
+    name: 'defaultCode',
+    instructions: "Please, select the default country or country and subregion."|t("holidays"),
+    value: settings.defaultCode,
+    options: providers,
+    required: true
+}) }}
