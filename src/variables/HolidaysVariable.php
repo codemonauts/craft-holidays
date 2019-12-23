@@ -6,14 +6,13 @@ use codemonauts\holidays\Holidays;
 
 class HolidaysVariable
 {
-    public function isTodayHoliday($country = null)
+    public function isTodayHoliday($type = null, $country = null)
     {
-        return Holidays::getInstance()->holidays->isTodayHoliday($country);
+        return Holidays::getInstance()->holidays->isTodayHoliday($type, $country);
     }
 
-    public function getHolidaysOfCurrentWeek($country = null)
+    public function getHolidaysOfCurrentWeek($type = null, $country = null)
     {
-        return Holidays::getInstance()->holidays->getHolidaysOfCurrentWeek($country);
+        return Holidays::getInstance()->holidays->getHolidaysOfCurrentWeek($type, $country);
     }
 }
-
