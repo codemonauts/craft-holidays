@@ -2,17 +2,18 @@
 
 namespace codemonauts\holidays\variables;
 
-use codemonauts\holidays\Holidays;
+use codemonauts\holidays\base\Holidays;
+use yii\base\Component;
 
-class HolidaysVariable
+class HolidaysVariable extends Component
 {
-    public function isTodayHoliday($type = null, $country = null)
+    public function attach($component)
     {
-        return Holidays::getInstance()->holidays->isTodayHoliday($type, $country);
+
     }
 
-    public function getHolidaysOfCurrentWeek($type = null, $country = null)
+    public function holidays()
     {
-        return Holidays::getInstance()->holidays->getHolidaysOfCurrentWeek($type, $country);
+        return Holidays::find();
     }
 }

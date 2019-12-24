@@ -7,7 +7,7 @@ use craft\base\Model;
 class Settings extends Model
 {
     /**
-     * @var string The Instagram account to get the feed from
+     * @var string Default country code in ISO 3166-2 (https://en.wikipedia.org/wiki/ISO_3166-2) notation.
      */
     public $defaultCode = '';
 

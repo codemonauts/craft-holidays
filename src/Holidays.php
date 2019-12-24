@@ -14,6 +14,7 @@ use yii\base\Event;
 
 /**
  * Class Holidays
+ *
  * @property HolidaysService holidays
  * @package codemonauts\holidays
  */
@@ -34,7 +35,9 @@ class Holidays extends Plugin
 
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $variable = $event->sender;
-            $variable->set('holidays', HolidaysVariable::class);
+            $variable->attachBehaviors([
+                HolidaysVariable::class,
+            ]);
         });
     }
 
