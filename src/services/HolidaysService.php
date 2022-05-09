@@ -7,10 +7,12 @@ use Craft;
 use craft\base\Component;
 use DateTime;
 use DateTimeZone;
+use Iterator;
+use Yasumi\ProviderInterface;
 
 class HolidaysService extends Component
 {
-    public function isTodayHoliday($type = null, $country = null)
+    public function isTodayHoliday(?string $type = null, ?string $country = null): bool
     {
         return Holidays::find()
             ->country($country)
@@ -19,7 +21,7 @@ class HolidaysService extends Component
             ->isHoliday();
     }
 
-    public function getTodaysHolidays($type = null, $country = null)
+    public function getTodaysHolidays($type = null, $country = null): ProviderInterface|Iterator
     {
         return Holidays::find()
             ->country($country)
@@ -28,7 +30,7 @@ class HolidaysService extends Component
             ->all();
     }
 
-    public function getHolidaysOfCurrentWeek($type = null, $country = null)
+    public function getHolidaysOfCurrentWeek($type = null, $country = null): ProviderInterface|Iterator
     {
         $monday = new DateTime('now', new DateTimeZone(Craft::$app->getTimeZone()));
 

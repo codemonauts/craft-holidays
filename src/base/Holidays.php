@@ -3,6 +3,7 @@
 namespace codemonauts\holidays\base;
 
 use Craft;
+use craft\helpers\App;
 use craft\helpers\DateTimeHelper;
 use DateTime;
 use DateTimeInterface;
@@ -16,40 +17,40 @@ use Yasumi\Filters\OfficialHolidaysFilter;
 use Yasumi\Filters\OtherHolidaysFilter;
 use Yasumi\Filters\SeasonalHolidaysFilter;
 use Yasumi\Holiday;
-use Yasumi\Provider\AbstractProvider;
+use Yasumi\ProviderInterface;
 use Yasumi\Yasumi;
 
 class Holidays
 {
     /**
-     * @var integer
+     * @var int
      */
-    private $_year;
+    private int $_year;
+
+    /**
+     * @var string|null
+     */
+    private ?string $_country = null;
+
+    /**
+     * @var string|null
+     */
+    private ?string $_type = null;
+
+    /**
+     * @var DateTime|null
+     */
+    private ?DateTime $_startDate = null;
+
+    /**
+     * @var DateTime|null
+     */
+    private ?DateTime $_endDate = null;
 
     /**
      * @var string
      */
-    private $_country;
-
-    /**
-     * @var null|string
-     */
-    private $_type = null;
-
-    /**
-     * @var null|DateTime
-     */
-    private $_startDate = null;
-
-    /**
-     * @var null|DateTime
-     */
-    private $_endDate = null;
-
-    /**
-     * @var string
-     */
-    private $_locale;
+    private string $_locale;
 
     public function __construct()
     {
@@ -70,7 +71,7 @@ class Holidays
         return $this;
     }
 
-    public function country(string $code): self
+    public function country(?string $code): self
     {
         $this->_country = $code;
 
@@ -111,7 +112,7 @@ class Holidays
         return $this->getHolidays()->current();
     }
 
-    public function all()
+    public function all(): ProviderInterface|Iterator
     {
         return $this->getHolidays();
     }
@@ -121,15 +122,15 @@ class Holidays
         return $this->getHolidays()->count();
     }
 
-    public function isHoliday()
+    public function isHoliday(): bool
     {
         return (bool)$this->getHolidays()->count();
     }
 
-    private function getYasumi(): AbstractProvider
+    private function getYasumi(): ProviderInterface
     {
         if ($this->_country === null) {
-            $this->_country = \codemonauts\holidays\Holidays::getInstance()->getSettings()->defaultCode;
+            $this->_country = App::parseEnv(\codemonauts\holidays\Holidays::$settings->defaultCode);
         }
 
         if ($this->_startDate !== null) {
@@ -138,7 +139,7 @@ class Holidays
 
         try {
             $yasumi = Yasumi::createByISO3166_2($this->_country, $this->_year, $this->_locale);
-        } catch (ProviderNotFoundException $e) {
+        } catch (ProviderNotFoundException) {
             Craft::error('No provider found for country code "' . $this->_country . '". Please check documentation! Fall back to "US".', 'Holidays');
             $yasumi = Yasumi::createByISO3166_2('US', $this->_year, $this->_locale);
         }
@@ -148,33 +149,14 @@ class Holidays
 
     private function filterType(Iterator $holidays, string $type): Iterator
     {
-        switch ($type) {
-
-            case Holiday::TYPE_OFFICIAL:
-                $filtered = new OfficialHolidaysFilter($holidays);
-                break;
-
-            case Holiday::TYPE_BANK:
-                $filtered = new BankHolidaysFilter($holidays);
-                break;
-
-            case Holiday::TYPE_OBSERVANCE:
-                $filtered = new ObservedHolidaysFilter($holidays);
-                break;
-
-            case Holiday::TYPE_SEASON:
-                $filtered = new SeasonalHolidaysFilter($holidays);
-                break;
-
-            case Holiday::TYPE_OTHER:
-                $filtered = new OtherHolidaysFilter($holidays);
-                break;
-
-            default:
-                throw new Exception('Unknown type of filter: "' . $type . '"');
-        }
-
-        return $filtered;
+        return match ($type) {
+            Holiday::TYPE_OFFICIAL => new OfficialHolidaysFilter($holidays),
+            Holiday::TYPE_BANK => new BankHolidaysFilter($holidays),
+            Holiday::TYPE_OBSERVANCE => new ObservedHolidaysFilter($holidays),
+            Holiday::TYPE_SEASON => new SeasonalHolidaysFilter($holidays),
+            Holiday::TYPE_OTHER => new OtherHolidaysFilter($holidays),
+            default => throw new Exception('Unknown type of filter: "' . $type . '"'),
+        };
     }
 
     private function getLocale(): string
@@ -184,7 +166,7 @@ class Holidays
         return str_replace('-', '_', $locale);
     }
 
-    private function getHolidays()
+    private function getHolidays(): ProviderInterface|Iterator
     {
         $holidays = $this->getYasumi();
 
@@ -203,7 +185,7 @@ class Holidays
         return $holidays;
     }
 
-    private function parseDate($date)
+    private function parseDate($date): DateTime|DateTimeInterface
     {
         if (is_a($date, DateTimeInterface::class)) {
             return $date;

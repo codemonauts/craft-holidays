@@ -54,7 +54,7 @@ For more details see [yasumi's feature page](https://azuyalabs.github.io/yasumi/
 
 ## Requirements
 
- * Craft CMS >= 3.0.0
+ * Craft CMS >= 4.0.0
 
 ## Installation
 
